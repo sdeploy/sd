@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl 'https://raw.githubusercontent.com/sdeploy/sd/master/bin/sd' > /usr/local/bin && chmod +x /usr/local/bin/sd

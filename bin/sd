@@ -1,0 +1,73 @@
+#!/bin/bash
+
+NAMES=(nginx jetty php mysql redis discover)
+
+cmd=$1
+if [ $cmd"x" = "x" ];then
+	echo "Usage: sd install|remove|list|update|selfupdate [name]"
+	echo "Usage: sd i|rm|l|u|su [name]"
+	cmd="list"
+fi
+
+if [ $cmd = "list" -o $cmd = "l" ];then
+	for n in ${NAMES[@]};
+	do
+		echo -e "[\033[36m$n\033[0m]	"`cat /opt/$n/VERSION 2>/dev/null`
+	done
+	exit 0
+fi
+
+if [ $cmd = "selfupdate" -o $cmd = "su" ];then
+	curl 'https://raw.githubusercontent.com/sdeploy/sd/master/bin/sd' > /usr/local/bin && chmod +x /usr/local/bin/sd
+	echo "OK"
+	exit 0
+fi
+
+
+name=$2
+postfix=$3
+target=/opt/$name$postfix
+
+if [ $name"x" = "x" ];then
+	echo "must give a name"
+	exit 2
+fi
+
+
+if [ $cmd = "install" -o $cmd = "i" -o $cmd = "update" -o $cmd = "o" ];then
+	cd /tmp
+	# curl "https://codeload.github.com/sdeploy/$name/zip/master" > /tmp/$name.zip
+	# if [ ! -f "/tmp/$name.zip" ];then
+	# 	echo "$name not exists"
+	# 	exit 2
+	# fi
+	# unzip /tmp/$name.zip
+	if [ ! -f "/tmp/${name}-master" -a ! -L "/tmp/${name}-master" ];then
+		echo "/tmp/${name}-master not exists"
+		exit 2
+	fi
+
+	if [ -f /tmp/${name}-master/install ];then
+		/bin/bash /tmp/${name}-master/install $postfix
+	else
+		mkdir -p $target
+		cp -r -f -v /tmp/${name}-master/* $target/
+		chmod +x $target/bin/*
+		if [ -d $target/bin ];then
+			for file in `ls $target/bin/`
+			do
+				echo "ln -s -f $target/bin/$file /usr/local/bin/$file$postfix"
+				ln -s -f $target/bin/$file /usr/local/bin/$file$postfix
+			done
+		fi
+	fi
+
+	mv -f /tmp/$name.zip /tmp/._deleted_$name.zip 2>/dev/null
+	# mv -f /tmp/${name}-master /tmp/._deleted_${name}-master 2>/dev/null
+	exit 0
+fi
+
+if [ $cmd = "remove" -o $cmd = "rm" ];then
+	mv -f /opt/${name} /tmp/._deleted_${name} 2>/dev/null
+	exit 0
+fi
