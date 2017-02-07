@@ -34,24 +34,33 @@ if [ $name"x" = "x" ];then
 fi
 
 
-if [ $cmd = "install" -o $cmd = "i" -o $cmd = "update" -o $cmd = "o" ];then
+if [ $cmd = "update" -o $cmd = "u" ];then
+	rm -rf /tmp/._deleted_${name}
+	mv -f /tmp/${name} /tmp/._deleted_${name}
+	cmd="install"
+fi
+
+if [ $cmd = "install" -o $cmd = "i" ];then
 	cd /tmp
-	# curl "https://codeload.github.com/sdeploy/$name/zip/master" > /tmp/$name.zip
-	# if [ ! -f "/tmp/$name.zip" ];then
-	# 	echo "$name not exists"
-	# 	exit 2
-	# fi
-	# unzip /tmp/$name.zip
-	if [ ! -f "/tmp/${name}-master" -a ! -L "/tmp/${name}-master" ];then
-		echo "/tmp/${name}-master not exists"
+	if [ ! -d "/tmp/${name}" -a ! -L "/tmp/${name}" ];then
+		curl "https://codeload.github.com/sdeploy/$name/zip/master" > /tmp/$name.zip
+		if [ ! -f "/tmp/$name.zip" ];then
+			echo "$name not exists"
+			exit 2
+		fi
+		unzip -o /tmp/$name.zip
+		mv /tmp/${name}-master /tmp/${name}
+	fi
+	if [ ! -d "/tmp/${name}" -a ! -L "/tmp/${name}" ];then
+		echo "/tmp/${name} not exists"
 		exit 2
 	fi
 
-	if [ -f /tmp/${name}-master/install ];then
-		/bin/bash /tmp/${name}-master/install $postfix
+	if [ -f /tmp/${name}/install ];then
+		/bin/bash /tmp/${name}/install $postfix
 	else
 		mkdir -p $target
-		cp -r -f -v /tmp/${name}-master/* $target/
+		cp -r -f -v /tmp/${name}/* $target/
 		chmod +x $target/bin/*
 		if [ -d $target/bin ];then
 			for file in `ls $target/bin/`
@@ -63,7 +72,6 @@ if [ $cmd = "install" -o $cmd = "i" -o $cmd = "update" -o $cmd = "o" ];then
 	fi
 
 	mv -f /tmp/$name.zip /tmp/._deleted_$name.zip 2>/dev/null
-	# mv -f /tmp/${name}-master /tmp/._deleted_${name}-master 2>/dev/null
 	exit 0
 fi
 
