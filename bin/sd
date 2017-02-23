@@ -33,7 +33,7 @@ if [ $name"x" = "x" ];then
 	exit 2
 fi
 
-
+echo `date +'[%Y-%m-%d %H:%M:%S]    sd '`$* >> /opt/sdeploy/logs/install.log
 if [ $cmd = "update" -o $cmd = "u" ];then
 	rm -rf /tmp/._deleted_${name}
 	mv -f /tmp/${name} /tmp/._deleted_${name}
@@ -61,6 +61,7 @@ if [ $cmd = "install" -o $cmd = "i" ];then
 	else
 		mkdir -p $target
 		cp -r -f -v /tmp/${name}/* $target/
+		rm -f $target/LICENSE $target/README.md $target/VERSION
 		chmod +x $target/bin/*
 		if [ -d $target/bin ];then
 			for file in `ls $target/bin/`

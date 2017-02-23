@@ -1,3 +1,9 @@
 #!/bin/bash
 
-curl 'https://raw.githubusercontent.com/sdeploy/sd/master/bin/sd' > /usr/local/bin/sd && chmod +x /usr/local/bin/sd
+mkdir -p /opt/sdeploy/bin
+mkdir -p /opt/sdeploy/logs
+curl 'https://raw.githubusercontent.com/sdeploy/sd/master/bin/sd' > /opt/sdeploy/bin/sd
+curl 'https://raw.githubusercontent.com/sdeploy/sd/master/bin/dm' > /opt/sdeploy/bin/dm
+chmod +x /opt/sdeploy/bin/*
+ln -s -f /opt/sdeploy/bin/sd /usr/local/bin/sd
+ln -s -f /opt/sdeploy/bin/dm /usr/local/bin/dm
