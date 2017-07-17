@@ -4,6 +4,6 @@ mkdir -p /opt/sdeploy/bin
 mkdir -p /opt/sdeploy/logs
 curl 'https://raw.githubusercontent.com/sdeploy/sd/master/bin/sd' > /opt/sdeploy/bin/sd
 curl 'https://raw.githubusercontent.com/sdeploy/sd/master/bin/dm' > /opt/sdeploy/bin/dm
+curl 'https://raw.githubusercontent.com/sdeploy/sd/master/bin/fw' > /opt/sdeploy/bin/fw
 chmod +x /opt/sdeploy/bin/*
-ln -s -f /opt/sdeploy/bin/sd /usr/local/bin/sd
-ln -s -f /opt/sdeploy/bin/dm /usr/local/bin/dm
+ln -s -f /opt/sdeploy/bin/* /usr/local/bin/
