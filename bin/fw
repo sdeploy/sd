@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ "`whoami`" = "root" ];then
+  echo ""
+else
+  echo "the current user is not root";
+  exit 1
+fi
+
+port=$1
+if [ $port"x" = "x" ];then
+	echo "Usage: fw port 1|0"
+	firewall-cmd --list-all
+	exit 1
+fi
+
+cmd=$2
+if [ $cmd"x" = "1x" ];then
+	echo "firewall-cmd --add-port=$port/tcp"
+	echo "firewall-cmd --permanent --add-port=$port/tcp"
+	firewall-cmd --add-port=$port/tcp
+	firewall-cmd --permanent --add-port=$port/tcp
+elif [ $cmd"x" = "0x" ];then
+	echo "firewall-cmd --remove-port=$port/tcp"
+	echo "firewall-cmd --permanent --remove-port=$port/tcp"
+	firewall-cmd --remove-port=$port/tcp
+	firewall-cmd --permanent --remove-port=$port/tcp
+else
+	echo "Usage: fw port 1|0"	
+fi
